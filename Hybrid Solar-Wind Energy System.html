@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Solar-Wind Energy System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef7ff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 12px #aaa;
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        .icons {
+            font-size: 65px;
+            margin: 15px;
+        }
+
+        .input-box {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 80%;
+            padding: 9px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #1976d2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d47a1;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #eaf3fa;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            margin: 5px;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .normal {
+            color: green;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .grid {
+            color: red;
+            font-weight: bold;
+        }
+
+        .bar {
+            width: 100%;
+            height: 25px;
+            background: #ddd;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        #totalBar {
+            background: #35b84a;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>☀️🌬️ Hybrid Solar-Wind Energy System</h1>
+
+    <div class="icons">
+        ☀️ ⚡ 🌬️
+    </div>
+
+    <p>
+        Solar + Wind Renewable Energy Monitoring System
+    </p>
+
+    <!-- Input Section -->
+
+    <div class="input-box">
+
+        <h2>Enter System Parameters</h2>
+
+        <label>
+            Solar Power (W)
+        </label>
+
+        <input
+            type="number"
+            id="solarPower"
+            value="3000"
+            min="0"
+        >
+
+        <label>
+            Wind Power (W)
+        </label>
+
+        <input
+            type="number"
+            id="windPower"
+            value="2000"
+            min="0"
+        >
+
+        <label>
+            Load Demand (W)
+        </label>
+
+        <input
+            type="number"
+            id="loadDemand"
+            value="4000"
+            min="0"
+        >
+
+        <label>
+            Battery Level (%)
+        </label>
+
+        <input
+            type="number"
+            id="battery"
+            value="70"
+            min="0"
+            max="100"
+        >
+
+    </div>
+
+    <button onclick="monitorSystem()">
+        Monitor System
+    </button>
+
+    <button onclick="resetSystem()">
+        Reset
+    </button>
+
+    <!-- Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>☀ Solar Power</h3>
+            <div class="value" id="solarDisplay">
+                3000 W
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🌬️ Wind Power</h3>
+            <div class="value" id="windDisplay">
+                2000 W
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>⚡ Total Renewable Power</h3>
+            <div class="value" id="totalDisplay">
+                5000 W
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🏠 Load Demand</h3>
+            <div class="value" id="loadDisplay">
+                4000 W
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔋 Battery</h3>
+            <div class="value" id="batteryDisplay">
+                70%
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Surplus / Deficit</h3>
+            <div class="value" id="differenceDisplay">
+                +1000 W
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Power Bar -->
+
+    <div class="result">
+
+        <h3>Renewable Power Level</h3>
+
+        <div class="bar">
+            <div class="bar-fill" id="totalBar"></div>
+        </div>
+
+        <h2>System Status</h2>
+
+        <p id="status">
+            Waiting for monitoring...
+        </p>
+
+        <p id="message">
+            Enter values and click Monitor System.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function monitorSystem() {
+
+    // Get input values
+
+    let solar =
+        Number(document.getElementById("solarPower").value);
+
+    let wind =
+        Number(document.getElementById("windPower").value);
+
+    let load =
+        Number(document.getElementById("loadDemand").value);
+
+    let battery =
+        Number(document.getElementById("battery").value);
+
+
+    // Calculate total renewable power
+
+    let totalRenewable = solar + wind;
+
+    // Calculate surplus or deficit
+
+    let difference = totalRenewable - load;
+
+
+    // Display values
+
+    document.getElementById("solarDisplay").innerText =
+        solar + " W";
+
+    document.getElementById("windDisplay").innerText =
+        wind + " W";
+
+    document.getElementById("totalDisplay").innerText =
+        totalRenewable + " W";
+
+    document.getElementById("loadDisplay").innerText =
+        load + " W";
+
+    document.getElementById("batteryDisplay").innerText =
+        battery + "%";
+
+
+    if (difference >= 0) {
+
+        document.getElementById("differenceDisplay").innerText =
+            "+" + difference + " W";
+
+    } else {
+
+        document.getElementById("differenceDisplay").innerText =
+            difference + " W";
+    }
+
+
+    // Update power bar
+
+    let percentage;
+
+    if (load > 0) {
+        percentage =
+            (totalRenewable / load) * 100;
+    } else {
+        percentage = 100;
+    }
+
+    percentage = Math.min(percentage, 100);
+
+    document.getElementById("totalBar").style.width =
+        percentage + "%";
+
+
+    // System status
+
+    let status =
+        document.getElementById("status");
+
+    let message =
+        document.getElementById("message");
+
+
+    if (totalRenewable >= load) {
+
+        status.innerText =
+            "✓ RENEWABLE ENERGY SUFFICIENT";
+
+        status.className = "normal";
+
+        message.innerText =
+            "Solar and wind power can supply the load.";
+
+    }
+
+    else {
+
+        let shortage = load - totalRenewable;
+
+        if (battery > 20) {
+
+            status.innerText =
+                "⚡ BATTERY SUPPORT REQUIRED";
+
+            status.className = "warning";
+
+            message.innerText =
+                "Renewable generation is low. Battery can support the remaining "
+                + shortage + " W.";
+
+        }
+
+        else {
+
+            status.innerText =
+                "⚠ GRID SUPPORT REQUIRED";
+
+            status.className = "grid";
+
+            message.innerText =
+                "Renewable power and battery level are insufficient. "
+                + shortage + " W additional power is required.";
+
+        }
+
+    }
+
+}
+
+
+// Reset system
+
+function resetSystem() {
+
+    document.getElementById("solarPower").value = 3000;
+    document.getElementById("windPower").value = 2000;
+    document.getElementById("loadDemand").value = 4000;
+    document.getElementById("battery").value = 70;
+
+    monitorSystem();
+}
+
+
+// Initial display
+
+monitorSystem();
+
+</script>
+
+</body>
+</html>
